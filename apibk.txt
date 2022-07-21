@@ -1,0 +1,99 @@
+let express = require('express');
+let app = express();
+let bodyParser = require('body-parser');
+let cors = require('cors')
+let dotenv = require('dotenv');
+dotenv.config()
+let port = process.env.PORT || 9870;
+let mongo = require('mongodb');
+let MongoClient = mongo.MongoClient;
+// let mongoUrl = process.env.MonogUrl;
+let mongoUrl = process.env.MonogLiveUrl;
+let db;
+
+let authKey = "Basica4556b3668b4e8d03ab07c543be9ef2b"
+
+function auth(key) {
+    if (authKey === key) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+
+
+// Default Route
+app.get('/', (req, res) => {
+    res.send(`Express Server Default Route`);
+})
+
+// Location Route
+app.get('/location', (req, res) => {
+    // let key = req.query.key;
+    let key = req.header('x-basic-auth');
+    if (authKey === key) {
+        db.collection('location').find().toArray((err, result) => {
+            if (err) throw err;
+            res.send(result);
+        })
+    } else {
+        res.send('Unauthorized Calling')
+    }
+
+})
+
+// Restaurant Route
+app.get('/restaurant', (req, res) => {
+    if (auth(req.header('x-basic-auth'))) {
+
+        db.collection('Restaurants').find().toArray((err, result) => {
+            if (err) throw err;
+            res.send(result);
+        })
+    } else {
+        res.send('Unauthorized Calling')
+    }
+})
+
+
+
+
+// MealType Route
+app.get('/mealType', (req, res) => {
+    db.collection('MealTypes').find().toArray((err, result) => {
+        if (err) throw err;
+        res.send(result);
+    })
+})
+
+
+
+
+
+
+
+
+// Connecting MongoDB 
+MongoClient.connect(mongoUrl, (err, client) => {
+    if (err) console.log(`Error While Connecting`);
+    db = client.db('internfeb');
+    app.listen(port, (err) => {
+        if (err) throw err;
+        console.log(`Express Server listening on port ${port}`)
+    })
+})
+
+
+// Param QueryParam Concept
+// app.get('/restaurants/:id',(req,res) => {
+//     let id = req.params.id;
+//     let state = req.query.state;
+//     let country = req.query.country;
+
+//     console.log(`>>>>>>>state`,state);
+//     console.log(`>>>>>>>country`,country);
+//     res.send(id);
+// })
