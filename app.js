@@ -5,7 +5,7 @@ let cors = require('cors');
 
 let dotenv = require('dotenv');
 dotenv.config()
-let port = process.env.PORT || 9870;
+let port = process.env.PORT || 17001;
 let mongo = require('mongodb');
 let MongoClient = mongo.MongoClient;
 // let mongoUrl = process.env.MonogUrl;
@@ -220,7 +220,7 @@ app.post('/placeOrder', (req,res) => {
             }
         },(err,result) => {
             if(err) throw err;
-            res.send("Order Updated")
+            res.send(result);
         }
     )
  })
