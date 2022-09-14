@@ -211,7 +211,7 @@ app.post('/placeOrder', (req,res) => {
  app.put('/updateOrder/:id', (req,res) => {
     let oid = Number(req.params.id);
     db.collection('Orders').updateOne(
-        {orderId:oid},
+        {id:oid},
         {
             $set: {
                 "status": req.body.status,
